@@ -65,7 +65,7 @@ sub stop {
 
 =head1 NAME
 
-knradio - interface for knradio, 92,7
+knradio - interface for knradio, 92,2 FM
 
 =head1 DESCRIPTION
 
