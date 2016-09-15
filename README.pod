@@ -39,7 +39,7 @@ Stop playback.
 
 =head1 CONTRIBUTORS
 
-None as of yet.
+Floff, for finding the np-url in the javascript mess.
 
 =head1 REPORTING BUGS
 
