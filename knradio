@@ -1,0 +1,124 @@
+#!/usr/bin/perl
+# vim:ft=perl:
+
+use strict;
+use utf8;
+use vars qw($VERSION);
+my $APP;
+
+sub usage {
+  pod2usage(
+      msg  => "$APP $VERSION\n",
+    verbose => 1,
+    exitval => 0,
+  );
+}
+
+BEGIN {
+  $APP     = 'knradio';
+  $VERSION = '0.001';
+
+  use Pod::Usage;
+  if( (!@ARGV) or ($ARGV[0] =~ m/--?h(?:elp)?\z/) ) {
+    usage();
+    exit;
+  }
+}
+
+use Getopt::Long;
+use LWP::Simple qw(get);
+
+
+
+GetOptions(
+  'np|now-playing' => sub { printf "%s\n", np(); },
+  'p|play'         => \&play,
+  's|stop'         => \&stop,
+  'h|help'         => \&usage,
+);
+
+
+
+sub np {
+  my @data = split(/\n/, get('http://www.knradio.se/latlist/exfile.php'));
+  for my $line(@data) {
+# the .. in the pattern is for unidentified garbage chars
+    if($line =~ m/Spelas just nu:..(.+)/i) {
+      return $1;
+    }
+  }
+}
+
+sub play {
+# for some reason mplayer can't handle this url. why?
+# Parsing playlist http://juice.citrus3.com:2199/tunein/knradio.pls...
+# Playlist parsing disabled for security reasons. Ignoring file.
+  system('cvlc', 'http://juice.citrus3.com:2199/tunein/knradio.pls');
+}
+
+sub stop {
+  system('killall', 'vlc');
+}
+
+
+=pod
+
+=head1 NAME
+
+knradio - interface for knradio, 92,7
+
+=head1 DESCRIPTION
+
+knradio is a command line interface for the "knradio" radio station.
+
+=head1 FEATURES
+
+=head2 -np, --now-playing
+
+Show what's currently playing on knradio.
+
+=head2 -p, --play
+
+Start playback.
+
+=head2 -s, --stop
+
+Stop playback.
+
+=head1 OPTIONS
+
+  -np, --now-playing     print the currently playing song title
+  -p,  --play            start playback
+  -s,  --stop            stop playback
+
+  -h,   --help            show this help
+
+=head1 AUTHOR
+
+  Magnus japh Woldrich
+  CPAN ID: WOLDRICH
+  m@japh.se
+  http://japh.se
+
+=head1 CONTRIBUTORS
+
+None as of yet.
+
+=head1 REPORTING BUGS
+
+Report bugs and/or feature requests to <m@japh.se>.
+
+=head1 COPYRIGHT
+
+Copyright 2016 the B<knradio> L</AUTHOR> as listed above.
+
+=head1 LICENSE
+
+This application is free software; you may redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+L<http://knradio.se>
+
+=cut

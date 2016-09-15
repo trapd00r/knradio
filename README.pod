@@ -1,0 +1,61 @@
+=pod
+
+=head1 NAME
+
+knradio - interface for knradio, 92,7
+
+=head1 DESCRIPTION
+
+knradio is a command line interface for the "knradio" radio station.
+
+=head1 FEATURES
+
+=head2 -np, --now-playing
+
+Show what's currently playing on knradio.
+
+=head2 -p, --play
+
+Start playback.
+
+=head2 -s, --stop
+
+Stop playback.
+
+=head1 OPTIONS
+
+  -np, --now-playing     print the currently playing song title
+  -p,  --play            start playback
+  -s,  --stop            stop playback
+
+  -h,   --help            show this help
+
+=head1 AUTHOR
+
+  Magnus japh Woldrich
+  CPAN ID: WOLDRICH
+  m@japh.se
+  http://japh.se
+
+=head1 CONTRIBUTORS
+
+None as of yet.
+
+=head1 REPORTING BUGS
+
+Report bugs and/or feature requests to <m@japh.se>.
+
+=head1 COPYRIGHT
+
+Copyright 2016 the B<knradio> L</AUTHOR> as listed above.
+
+=head1 LICENSE
+
+This application is free software; you may redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+L<http://knradio.se>
+
+=cut
