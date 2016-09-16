@@ -16,7 +16,7 @@ sub usage {
 
 BEGIN {
   $APP     = 'knradio';
-  $VERSION = '0.001';
+  $VERSION = '0.010';
 
   use Pod::Usage;
   if( (!@ARGV) or ($ARGV[0] =~ m/--?h(?:elp)?\z/) ) {
@@ -28,12 +28,16 @@ BEGIN {
 use Getopt::Long;
 use LWP::Simple qw(get);
 
+my $log     = "~/knradio.log";
+my $pidfile = '/tmp/knradio.pid';
 
 
+my $opt_no_daemon;
 GetOptions(
   'np|now-playing' => sub { printf "%s\n", np(); },
   'p|play'         => \&play,
   's|stop'         => \&stop,
+  'nd|no-daemon'   => \$opt_no_daemon,
   'h|help'         => \&usage,
 );
 
@@ -50,15 +54,46 @@ sub np {
 }
 
 sub play {
+  if(!($opt_no_daemon)) {
+    daemonize()
+  }
 # for some reason mplayer can't handle this url. why?
 # Parsing playlist http://juice.citrus3.com:2199/tunein/knradio.pls...
 # Playlist parsing disabled for security reasons. Ignoring file.
-  system('cvlc', 'http://juice.citrus3.com:2199/tunein/knradio.pls');
+  exec('cvlc', 'http://juice.citrus3.com:2199/tunein/knradio.pls');
 }
 
 sub stop {
-  system('killall', 'vlc');
+  exec('killall', 'vlc');
 }
+
+sub daemonize {
+  use POSIX 'setsid';
+  my $pid = fork();
+  exit 0 if $pid;
+  exit 1 if ! defined $pid;
+
+  setsid();
+  $pid = fork();
+  exit 1 if ! defined $pid;
+
+  if($pid) {
+    waitpid($pid, 0);
+    unlink $pidfile;
+    exit 0;
+  }
+  elsif($pid == 0) {
+    my $PID;
+    open($PID, '>', $pidfile) or die "Cant create pidfile $pidfile: $!";
+    print $PID $$;
+    close $PID;
+
+    open(STDOUT, '>', $log);
+    open(STDERR, '>', '/dev/null');
+    open(STDIN,  '>', '/dev/null');
+  }
+}
+
 
 
 =pod
@@ -90,6 +125,7 @@ Stop playback.
   -np, --now-playing     print the currently playing song title
   -p,  --play            start playback
   -s,  --stop            stop playback
+  -n,  --no-daemon       don't fork into the background
 
   -h,   --help            show this help
 

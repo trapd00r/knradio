@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-knradio - interface for knradio, 92,7
+knradio - interface for knradio, 92,2 FM
 
 =head1 DESCRIPTION
 
@@ -27,6 +27,7 @@ Stop playback.
   -np, --now-playing     print the currently playing song title
   -p,  --play            start playback
   -s,  --stop            stop playback
+  -n,  --no-daemon       don't fork into the background
 
   -h,   --help            show this help
 
