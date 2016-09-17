@@ -2,13 +2,14 @@
 # vim:ft=perl:
 
 use strict;
+use warnings;
 use utf8;
 use vars qw($VERSION);
 my $APP;
 
 sub usage {
   pod2usage(
-      msg  => "$APP $VERSION\n",
+       msg  => "$APP $VERSION\n",
     verbose => 1,
     exitval => 0,
   );
@@ -16,7 +17,7 @@ sub usage {
 
 BEGIN {
   $APP     = 'knradio';
-  $VERSION = '0.010';
+  $VERSION = '0.025';
 
   use Pod::Usage;
   if( (!@ARGV) or ($ARGV[0] =~ m/--?h(?:elp)?\z/) ) {
@@ -28,8 +29,9 @@ BEGIN {
 use Getopt::Long;
 use LWP::Simple qw(get);
 
-my $log     = "~/knradio.log";
+my $log     = "$ENV{HOME}/knradio.log";
 my $pidfile = '/tmp/knradio.pid';
+my $history = "$ENV{HOME}/knradio_history.log";
 
 
 my $opt_no_daemon;
@@ -37,10 +39,29 @@ GetOptions(
   'np|now-playing' => sub { printf "%s\n", np(); },
   'p|play'         => \&play,
   's|stop'         => \&stop,
+  'l|log'          => \&log,
   'nd|no-daemon'   => \$opt_no_daemon,
   'h|help'         => \&usage,
+  'v|version'      => sub { printf "%s v%s\n", $APP, $VERSION; exit },
 );
 
+sub log {
+  if(!($opt_no_daemon)) {
+    daemonize();
+  }
+  open(STDOUT, '>>', $history) or die "$!";
+  #$|++; # autoflush
+  #open(my $fh, '>>', $history) or die "$!";
+  while(1) {
+    my $np = np();
+    if($np ne 'nil') {
+      printf "[%s]  %s\n", scalar(localtime), $np;
+      sleep 240;
+    }
+    # else, we can expect a new song soon
+#    sleep 2;
+  }
+}
 
 
 sub np {
@@ -50,7 +71,11 @@ sub np {
     if($line =~ m/Spelas just nu:..(.+)/i) {
       return $1;
     }
+    else {
+      next;
+    }
   }
+  return 'nil';
 }
 
 sub play {
@@ -88,7 +113,7 @@ sub daemonize {
     print $PID $$;
     close $PID;
 
-    open(STDOUT, '>', $log);
+    #open(STDOUT, '>', $log);
     open(STDERR, '>', '/dev/null');
     open(STDIN,  '>', '/dev/null');
   }
@@ -125,9 +150,11 @@ Stop playback.
   -np, --now-playing     print the currently playing song title
   -p,  --play            start playback
   -s,  --stop            stop playback
+  -l,  --log             log playlist history to file
   -n,  --no-daemon       don't fork into the background
 
-  -h,   --help            show this help
+  -h,   --help           show this help
+  -v,   --version        show version info
 
 =head1 AUTHOR
 
