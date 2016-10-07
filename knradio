@@ -146,20 +146,6 @@ knradio - interface for knradio, 92,2 FM
 
 knradio is a command line interface for the "knradio" radio station.
 
-=head1 FEATURES
-
-=head2 -np, --now-playing
-
-Show what's currently playing on knradio.
-
-=head2 -p, --play
-
-Start playback.
-
-=head2 -s, --stop
-
-Stop playback.
-
 =head1 OPTIONS
 
   -np, --now-playing     print the currently playing song title
