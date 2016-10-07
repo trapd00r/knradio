@@ -27,9 +27,13 @@ Stop playback.
   -np, --now-playing     print the currently playing song title
   -p,  --play            start playback
   -s,  --stop            stop playback
+  -l,  --log             log playlist history to file
+  -f,  --fav             add now playing song to favorites
+  -lf, --list            list favorites
   -n,  --no-daemon       don't fork into the background
 
-  -h,   --help            show this help
+  -h,   --help           show this help
+  -v,   --version        show version info
 
 =head1 AUTHOR
 
