@@ -17,7 +17,7 @@ sub usage {
 
 BEGIN {
   $APP     = 'knradio';
-  $VERSION = '0.025';
+  $VERSION = '0.030';
 
   use Pod::Usage;
   if( (!@ARGV) or ($ARGV[0] =~ m/--?h(?:elp)?\z/) ) {
@@ -32,6 +32,7 @@ use LWP::Simple qw(get);
 my $log     = "$ENV{HOME}/knradio.log";
 my $pidfile = '/tmp/knradio.pid';
 my $history = "$ENV{HOME}/knradio_history.log";
+my $favfile = "$ENV{HOME}/knradio_fav.log";
 
 
 my $opt_no_daemon;
@@ -40,6 +41,7 @@ GetOptions(
   'p|play'         => \&play,
   's|stop'         => \&stop,
   'l|log'          => \&log,
+  'f|fav'          => \&fav,
   'nd|no-daemon'   => \$opt_no_daemon,
   'h|help'         => \&usage,
   'v|version'      => sub { printf "%s v%s\n", $APP, $VERSION; exit },
@@ -86,6 +88,12 @@ sub play {
 # Parsing playlist http://juice.citrus3.com:2199/tunein/knradio.pls...
 # Playlist parsing disabled for security reasons. Ignoring file.
   exec('cvlc', 'http://juice.citrus3.com:2199/tunein/knradio.pls');
+}
+
+sub fav {
+  open(my $fh, '>>', $favfile) or die "Can't open $favfile: $!\n";
+  print $fh np();
+  close $fh;
 }
 
 sub stop {
@@ -151,6 +159,7 @@ Stop playback.
   -p,  --play            start playback
   -s,  --stop            stop playback
   -l,  --log             log playlist history to file
+  -f,  --fav             add now playing song to favorites
   -n,  --no-daemon       don't fork into the background
 
   -h,   --help           show this help
