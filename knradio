@@ -17,7 +17,7 @@ sub usage {
 
 BEGIN {
   $APP     = 'knradio';
-  $VERSION = '0.030';
+  $VERSION = '0.032';
 
   use Pod::Usage;
   if( (!@ARGV) or ($ARGV[0] =~ m/--?h(?:elp)?\z/) ) {
@@ -42,6 +42,7 @@ GetOptions(
   's|stop'         => \&stop,
   'l|log'          => \&log,
   'f|fav'          => \&fav,
+  'lf|list'        => \&list_fav,
   'nd|no-daemon'   => \$opt_no_daemon,
   'h|help'         => \&usage,
   'v|version'      => sub { printf "%s v%s\n", $APP, $VERSION; exit },
@@ -92,7 +93,13 @@ sub play {
 
 sub fav {
   open(my $fh, '>>', $favfile) or die "Can't open $favfile: $!\n";
-  print $fh np();
+  print $fh np() . "\n";
+  close $fh;
+}
+
+sub list_fav {
+  open(my $fh, '<', $favfile) or die "Can't open $favfile: $!\n";
+  print while <$fh>;
   close $fh;
 }
 
@@ -160,6 +167,7 @@ Stop playback.
   -s,  --stop            stop playback
   -l,  --log             log playlist history to file
   -f,  --fav             add now playing song to favorites
+  -lf, --list            list favorites
   -n,  --no-daemon       don't fork into the background
 
   -h,   --help           show this help
