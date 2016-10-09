@@ -17,7 +17,7 @@ sub usage {
 
 BEGIN {
   $APP     = 'knradio';
-  $VERSION = '0.032';
+  $VERSION = '0.034';
 
   use Pod::Usage;
   if( (!@ARGV) or ($ARGV[0] =~ m/--?h(?:elp)?\z/) ) {
@@ -99,7 +99,10 @@ sub fav {
 
 sub list_fav {
   open(my $fh, '<', $favfile) or die "Can't open $favfile: $!\n";
-  print while <$fh>;
+  printf "\033[38;5;220m%25s\033[m\n", 'knradio favorites';
+  while(<$fh>) {
+    m/^(.+) - (.+)/ and printf "\033[3m%20s\033[m - \033[1m%s\033[m\n", $1, $2;
+  }
   close $fh;
 }
 
