@@ -17,7 +17,7 @@ sub usage {
 
 BEGIN {
   $APP     = 'knradio';
-  $VERSION = '0.034';
+  $VERSION = '0.035';
 
   use Pod::Usage;
   if( (!@ARGV) or ($ARGV[0] =~ m/--?h(?:elp)?\z/) ) {
@@ -68,7 +68,12 @@ sub log {
 
 
 sub np {
-  my @data = split(/\n/, get('http://www.knradio.se/latlist/exfile.php'));
+  my @data;
+  {
+    no warnings;
+    @data = split(/\n/, get('http://www.knradio.se/latlist/exfile.php')) or
+    die "Can't fetch nowplaying data. Are you connected to the internet?\n";
+  }
   for my $line(@data) {
 # the .. in the pattern is for unidentified garbage chars
     if($line =~ m/Spelas just nu:..(.+)/i) {
