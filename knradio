@@ -7,6 +7,21 @@ use utf8;
 use vars qw($VERSION);
 my $APP;
 
+
+sub player_cmd  {
+  my %player_opts = (
+    vlc     => '/usr/bin/cvlc',
+    mplayer => '/usr/bin/mplayer',
+  );
+
+  for my $k(keys(%player_opts)) {
+    if(-e $player_opts{$k}) {
+      return $player_opts{$k};
+    }
+  }
+}
+
+
 sub usage {
   pod2usage(
        msg  => "$APP $VERSION\n",
@@ -17,7 +32,7 @@ sub usage {
 
 BEGIN {
   $APP     = 'knradio';
-  $VERSION = '0.035';
+  $VERSION = '0.040';
 
   use Pod::Usage;
   if( (!@ARGV) or ($ARGV[0] =~ m/--?h(?:elp)?\z/) ) {
@@ -34,6 +49,7 @@ my $pidfile = '/tmp/knradio.pid';
 my $history = "$ENV{HOME}/knradio_history.log";
 my $favfile = "$ENV{HOME}/knradio_fav.log";
 
+my $knradio_url = 'http://85.17.122.32:8012/stream';
 
 my $opt_no_daemon;
 GetOptions(
@@ -93,7 +109,13 @@ sub play {
 # for some reason mplayer can't handle this url. why?
 # Parsing playlist http://juice.citrus3.com:2199/tunein/knradio.pls...
 # Playlist parsing disabled for security reasons. Ignoring file.
-  exec('cvlc', 'http://juice.citrus3.com:2199/tunein/knradio.pls');
+##  exec(player_cmd(), 'http://juice.citrus3.com:2199/tunein/knradio.pls');
+
+# curl -s http://juice.citrus3.com:2199/tunein/knradio.pls | grep http
+# File1=http://85.17.122.32:8012/stream
+# mplayer can handle that url.
+#
+  exec(player_cmd(), $knradio_url);
 }
 
 sub fav {
