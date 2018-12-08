@@ -32,7 +32,7 @@ sub usage {
 
 BEGIN {
   $APP     = 'knradio';
-  $VERSION = '0.040';
+  $VERSION = '0.042';
 
   use Pod::Usage;
   if( (!@ARGV) or ($ARGV[0] =~ m/--?h(?:elp)?\z/) ) {
@@ -44,10 +44,10 @@ BEGIN {
 use Getopt::Long;
 use LWP::Simple qw(get);
 
-my $log     = "$ENV{HOME}/knradio.log";
+my $log     = "$ENV{XDG_DATA_HOME}/knradio/knradio.log";
 my $pidfile = '/tmp/knradio.pid';
-my $history = "$ENV{HOME}/knradio_history.log";
-my $favfile = "$ENV{HOME}/knradio_fav.log";
+my $history = "$ENV{XDG_DATA_HOME}/knradio/knradio_history.log";
+my $favfile = "$ENV{XDG_DATA_HOME}/knradio/knradio_fav.log";
 
 my $knradio_url = 'http://85.17.122.32:8012/stream';
 
@@ -206,7 +206,7 @@ Report bugs and/or feature requests to <m@japh.se>.
 
 =head1 COPYRIGHT
 
-Copyright 2016 the B<knradio> L</AUTHOR> as listed above.
+Copyright 2016, 2018 the B<knradio> L</AUTHOR> as listed above.
 
 =head1 LICENSE
 
